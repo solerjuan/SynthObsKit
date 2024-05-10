@@ -17,7 +17,7 @@ from astropy import constants as const
 from astropy import units as u
 
 #def tauhi(dens, temperature, vlos, pos, vsize=100, dv=1.0, selfabsorption=True, dens_thres=5.0E2, dens_max=1.0E4, temp_thres=5.0E2):
-def tauhi(dens, temperature, vlos, pos, vsize=100, dv=1.0, selfabsorption=True, mincodens=500.0, maxcot=50.0, minhit=0.0, maxcnmt=200.0, minwnmt=5000., maxwnmt=8500.):
+def taumulti(dens, temperature, vlos, pos, vsize=100, dv=1.0, selfabsorption=True, mincodens=500.0, maxcot=50.0, minhit=0.0, maxcnmt=200.0, minwnmt=5000., maxwnmt=8500.):
    # Calculate synthetic HI emission
    #
    # INPUTS
@@ -39,7 +39,8 @@ def tauhi(dens, temperature, vlos, pos, vsize=100, dv=1.0, selfabsorption=True, 
    dens_all=dens.copy() 
 
    #here we very roughly set that if the density is larger than 500 cm**-3 the gas is molecular (should be improved a lot)
-   selpix=np.logical_or(temperature > maxcot, dens < mincodens).nonzero()
+   #selpix=np.logical_or(temperature > maxcot, dens < mincodens).nonzero()
+   selpix=(dens < mincodens).nonzero()
    if(np.size(selpix) > 0):
       dens_co[selpix]=0.
  
@@ -99,8 +100,8 @@ def tauhi(dens, temperature, vlos, pos, vsize=100, dv=1.0, selfabsorption=True, 
       tau_cell_wnm=dens_wnm[i]*dx[i]*p_cnm*coef_abso/temperature[i]
       tau_cell_cnm=dens_cnm[i]*dx[i]*p_cnm*coef_abso/temperature[i]
       tau_cell_all=dens[i]*dx[i]*p_cnm*coef_abso/temperature[i]
-      #tau_cell_co=dens_co[i]*dx[i]*p_co*coef_abso/temperature[i]
-      tau_cell_co=dens_co[i]*coefCO
+      tau_cell_co=dens_co[i]*dx[i]*p_co*coef_abso/temperature[i]
+      #tau_cell_co=dens_co[i]*coefCO.value
 
       if (selfabsorption):
          absorp_all=np.exp(-tau_all)
